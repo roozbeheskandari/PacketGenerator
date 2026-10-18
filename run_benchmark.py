@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-"""
-run_benchmark.py: Automates workload replay, resource polling,
-subtable statistics parsing, and CSV metrics export.
-Usage:
-    sudo python3 run_benchmark.py --scenario <BASE|LOCAL|GLOBAL_AI|FULL_TIER>
-"""
 import sys
 import time
 import subprocess
@@ -51,7 +44,6 @@ def run_test(scenario, duration_sec=15):
     proc = psutil.Process(ovs_pid)
     clear_ovs_stats()
     
-    # Run tcpreplay in background inside ns1
     print("[*] Replaying PCAP traffic in ns1...")
     pcap_cmd = "tcpreplay --topspeed --loop=3 -i veth1 benchmark_traffic.pcap"
     replay_proc = subprocess.Popen(
@@ -65,7 +57,7 @@ def run_test(scenario, duration_sec=15):
     
     while time.time() - start_time < duration_sec:
         cpu = proc.cpu_percent(interval=0.2)
-        mem = proc.memory_info().rss / (1024 * 1024) # MB
+        mem = proc.memory_info().rss / (1024 * 1024)
         cpu_records.append(cpu)
         mem_records.append(mem)
         if replay_proc.poll() is not None:
@@ -77,14 +69,12 @@ def run_test(scenario, duration_sec=15):
         pass
         
     rx, tx, mf_hits, lookups_per_hit = get_pmd_stats()
-    
     avg_cpu = sum(cpu_records) / len(cpu_records) if cpu_records else 0
     max_cpu = max(cpu_records) if cpu_records else 0
     avg_mem = sum(mem_records) / len(mem_records) if mem_records else 0
-    elapsed = time.time() - start_time
+    elapsed = max(time.time() - start_time, 0.001)
     mpps = (rx / elapsed) / 1e6
     
-    # Calculate Latency via ping sample
     ping_res = subprocess.run(
         ["ip", "netns", "exec", "ns1", "ping", "-c", "20", "-i", "0.2", "10.0.0.2"],
         capture_output=True, text=True
@@ -111,7 +101,7 @@ def run_test(scenario, duration_sec=15):
         writer.writeheader()
         writer.writerow(result)
         
-    print(f"[+] Benchmark completed successfully! Results saved in: {filename}")
+    print(f"[+] Benchmark completed! Results saved to: {filename}")
     print(result)
 
 if __name__ == "__main__":
