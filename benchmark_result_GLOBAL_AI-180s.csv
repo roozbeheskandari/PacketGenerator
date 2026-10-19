@@ -1,0 +1,2 @@
+Scenario,Total_Rx_Packets,Total_Tx_Packets,Throughput_Mpps,Avg_RTT_Latency_ms,Packet_Loss_Percent,Dropped_Packets,Megaflow_Hits,Subtbl_Lookups_per_Hit,Avg_CPU_Percent,Max_CPU_Percent,Avg_Memory_MB,Cuckoo_Lookups,Cuckoo_Hits,Cuckoo_Misses,Cuckoo_Insert_Failures,AI_True_Positives,AI_False_Positives,AI_False_Negatives,AI_Precision,AI_Recall,AI_F1_Score
+GLOBAL_AI,10000000,9700000,0.0555,0.018005,3.0,300000,8800000,1.12,0.13,10.0,18.51,9800000,8722000,1078000,12,6800000,200000,300000,0.9714,0.9577,0.9645
